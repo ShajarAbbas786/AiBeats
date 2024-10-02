@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "419841373405",
+    "project_id": "aibeats-ce80d",
+    "storage_bucket": "aibeats-ce80d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:419841373405:android:3e25c4a9fc3e16722f5734",
+        "android_client_info": {
+          "package_name": "com.aibeats"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDRjI7_NNPjUMlgf6NGUwciP8DtXoGk-JU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

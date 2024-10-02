@@ -1,11 +1,53 @@
-import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
-import React from 'react';
-import { useNavigation } from '@react-navigation/native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  TouchableOpacity,
+  ActivityIndicator,
+} from 'react-native';
+import React, {useState, useEffect} from 'react';
+import {useNavigation} from '@react-navigation/native';
+import {firebase} from './FirebaseConfig';
+import {getUserProfile} from './AuthService';
 import notifyIcon from '../assets/notification.png';
-import CamerIcon from '../assets/Camer_icon.png'; // Correctly import your camera icon
+import CamerIcon from '../assets/Camer_icon.png';
 import LinearGradient from 'react-native-linear-gradient';
+
 const Profile = () => {
   const navigation = useNavigation();
+  const [userData, setUserData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const currentUser = firebase.auth().currentUser;
+        if (currentUser) {
+          const userProfile = await getUserProfile(currentUser.uid);
+          setUserData(userProfile);
+        }
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
+  if (loading) {
+    return (
+      <View
+        style={[
+          styles.container,
+          {justifyContent: 'center', alignItems: 'center'},
+        ]}>
+        <ActivityIndicator size="large" color="#A307CA" />
+      </View>
+    );
+  }
 
   const back = () => {
     // Navigate to the next screen here
@@ -15,7 +57,7 @@ const Profile = () => {
   return (
     <View style={styles.container}>
       <Image
-        style={{ position: 'absolute', width: '100%', height: 1000, top: -300 }}
+        style={{position: 'absolute', width: '100%', height: 1000, top: -300}}
         source={require('../assets/Ellipse2.png')}
       />
       <Image
@@ -35,7 +77,10 @@ const Profile = () => {
       <View style={styles.nav}>
         <View>
           <TouchableOpacity onPress={back}>
-            <Image style={{ marginLeft: 10 }} source={require('../assets/Back.png')} />
+            <Image
+              style={{marginLeft: 10}}
+              source={require('../assets/Back.png')}
+            />
           </TouchableOpacity>
         </View>
         <View>
@@ -48,104 +93,221 @@ const Profile = () => {
 
       {/* Camera section */}
       <View style={styles.container2}>
-      <LinearGradient
-        colors={['#A307CA', '#2059CA']}
-        style={styles.linearGradient4}>
-       </LinearGradient>
+        <LinearGradient
+          colors={['#A307CA', '#2059CA']}
+          style={styles.linearGradient4}
+        />
         <View style={styles.iconContainer}>
-      
           <Image source={CamerIcon} style={styles.icon} />
         </View>
         <View>
-        <Text style={styles.userName}>Shajar Abbas</Text>
-        <Text style={styles.userEmail}>hguys7871@gmail.com</Text>
+          <Text style={styles.userName}>{userData?.username || 'User'}</Text>
+          <Text style={styles.userEmail}>{userData?.email || 'No email'}</Text>
         </View>
       </View>
 
- <View style={{marginTop:20}}>
- <View style={[styles.card,{display:'flex',flexDirection:'row',justifyContent:'space-between',alignItems:'center'}]}>
-   <View style={{display:'flex',flexDirection:'row'}}>
-   <Image style={{marginLeft:15}} source={require('../assets/profile_icon.png')} />
-   <Text style={[styles.txt,{marginLeft:10}]}>Edit Profile</Text>
-   </View>
-   <View>
-   <Image source={require('../assets/Next_icon.png')} style={[styles.searchIcon,{marginRight:15}]} />
-   </View>
-   </View>
 
-   <View style={[styles.card,{display:'flex',flexDirection:'row',justifyContent:'space-between',alignItems:'center'}]}>
-   <View style={{display:'flex',flexDirection:'row'}}>
-   <Image style={{marginLeft:15}} source={require('../assets/audioquality_icon.png')} />
-   <Text style={[styles.txt,{marginLeft:10}]}>Audio Quality</Text>
-   </View>
-   <View>
-   <Image source={require('../assets/Next_icon.png')} style={[styles.searchIcon,{marginRight:15}]} />
-   </View>
-   </View>
+      <View style={{marginTop: 20}}>
+        <View
+          style={[
+            styles.card,
+            {
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            },
+          ]}>
+          <View style={{display: 'flex', flexDirection: 'row'}}>
+            <Image
+              style={{marginLeft: 15}}
+              source={require('../assets/profile_icon.png')}
+            />
+            <Text style={[styles.txt, {marginLeft: 10}]}>Edit Profile</Text>
+          </View>
+          <View>
+            <Image
+              source={require('../assets/Next_icon.png')}
+              style={[styles.searchIcon, {marginRight: 15}]}
+            />
+          </View>
+        </View>
 
-   <View style={[styles.card,{display:'flex',flexDirection:'row',justifyContent:'space-between',alignItems:'center'}]}>
-   <View style={{display:'flex',flexDirection:'row'}}>
-   <Image style={{marginLeft:15}} source={require('../assets/videoqulaity_icon.png')} />
-   <Text style={[styles.txt,{marginLeft:10}]}>Video Quality</Text>
-   </View>
-   <View>
-   <Image source={require('../assets/Next_icon.png')} style={[styles.searchIcon,{marginRight:15}]} />
-   </View>
-   </View>
+        <View
+          style={[
+            styles.card,
+            {
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            },
+          ]}>
+          <View style={{display: 'flex', flexDirection: 'row'}}>
+            <Image
+              style={{marginLeft: 15}}
+              source={require('../assets/audioquality_icon.png')}
+            />
+            <Text style={[styles.txt, {marginLeft: 10}]}>Audio Quality</Text>
+          </View>
+          <View>
+            <Image
+              source={require('../assets/Next_icon.png')}
+              style={[styles.searchIcon, {marginRight: 15}]}
+            />
+          </View>
+        </View>
 
-   <View style={[styles.card,{display:'flex',flexDirection:'row',justifyContent:'space-between',alignItems:'center'}]}>
-   <View style={{display:'flex',flexDirection:'row'}}>
-   <Image style={{marginLeft:15}} source={require('../assets/download_icon.png')} />
-   <Text style={[styles.txt,{marginLeft:10}]}>Download</Text>
-   </View>
-   <View>
-   <Image source={require('../assets/Next_icon.png')} style={[styles.searchIcon,{marginRight:15}]} />
-   </View>
-   </View>
+        <View
+          style={[
+            styles.card,
+            {
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            },
+          ]}>
+          <View style={{display: 'flex', flexDirection: 'row'}}>
+            <Image
+              style={{marginLeft: 15}}
+              source={require('../assets/videoqulaity_icon.png')}
+            />
+            <Text style={[styles.txt, {marginLeft: 10}]}>Video Quality</Text>
+          </View>
+          <View>
+            <Image
+              source={require('../assets/Next_icon.png')}
+              style={[styles.searchIcon, {marginRight: 15}]}
+            />
+          </View>
+        </View>
 
-   <View style={[styles.card,{display:'flex',flexDirection:'row',justifyContent:'space-between',alignItems:'center'}]}>
-   <View style={{display:'flex',flexDirection:'row'}}>
-   <Image style={{marginLeft:15}} source={require('../assets/language_icon.png')} />
-   <Text style={[styles.txt,{marginLeft:10}]}>Language</Text>
-   </View>
-   <View>
-   <Image source={require('../assets/Next_icon.png')} style={[styles.searchIcon,{marginRight:15}]} />
-   </View>
-   </View>
+        <View
+          style={[
+            styles.card,
+            {
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            },
+          ]}>
+          <View style={{display: 'flex', flexDirection: 'row'}}>
+            <Image
+              style={{marginLeft: 15}}
+              source={require('../assets/download_icon.png')}
+            />
+            <Text style={[styles.txt, {marginLeft: 10}]}>Download</Text>
+          </View>
+          <View>
+            <Image
+              source={require('../assets/Next_icon.png')}
+              style={[styles.searchIcon, {marginRight: 15}]}
+            />
+          </View>
+        </View>
 
-   <View style={[styles.card,{display:'flex',flexDirection:'row',justifyContent:'space-between',alignItems:'center'}]}>
-   <View style={{display:'flex',flexDirection:'row'}}>
-   <Image style={{marginLeft:15}} source={require('../assets/storage_icon.png')} />
-   <Text style={[styles.txt,{marginLeft:10}]}>Storage</Text>
-   </View>
-   <View>
-   <Image source={require('../assets/Next_icon.png')} style={[styles.searchIcon,{marginRight:15}]} />
-   </View>
-   </View>
+        <View
+          style={[
+            styles.card,
+            {
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            },
+          ]}>
+          <View style={{display: 'flex', flexDirection: 'row'}}>
+            <Image
+              style={{marginLeft: 15}}
+              source={require('../assets/language_icon.png')}
+            />
+            <Text style={[styles.txt, {marginLeft: 10}]}>Language</Text>
+          </View>
+          <View>
+            <Image
+              source={require('../assets/Next_icon.png')}
+              style={[styles.searchIcon, {marginRight: 15}]}
+            />
+          </View>
+        </View>
 
-   <View style={[styles.card,{display:'flex',flexDirection:'row',justifyContent:'space-between',alignItems:'center'}]}>
-   <View style={{display:'flex',flexDirection:'row'}}>
-   <Image style={{marginLeft:15}} source={require('../assets/setting_icon.png')} />
-   <Text style={[styles.txt,{marginLeft:10}]}>Setting</Text>
-   </View>
-   <View>
-   <Image source={require('../assets/Next_icon.png')} style={[styles.searchIcon,{marginRight:15}]} />
-   </View>
-   </View>
+        <View
+          style={[
+            styles.card,
+            {
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            },
+          ]}>
+          <View style={{display: 'flex', flexDirection: 'row'}}>
+            <Image
+              style={{marginLeft: 15}}
+              source={require('../assets/storage_icon.png')}
+            />
+            <Text style={[styles.txt, {marginLeft: 10}]}>Storage</Text>
+          </View>
+          <View>
+            <Image
+              source={require('../assets/Next_icon.png')}
+              style={[styles.searchIcon, {marginRight: 15}]}
+            />
+          </View>
+        </View>
 
+        <View
+          style={[
+            styles.card,
+            {
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            },
+          ]}>
+          <View style={{display: 'flex', flexDirection: 'row'}}>
+            <Image
+              style={{marginLeft: 15}}
+              source={require('../assets/setting_icon.png')}
+            />
+            <Text style={[styles.txt, {marginLeft: 10}]}>Setting</Text>
+          </View>
+          <View>
+            <Image
+              source={require('../assets/Next_icon.png')}
+              style={[styles.searchIcon, {marginRight: 15}]}
+            />
+          </View>
+        </View>
 
-   <View style={[styles.card,{display:'flex',flexDirection:'row',justifyContent:'space-between',alignItems:'center'}]}>
-   <View style={{display:'flex',flexDirection:'row'}}>
-   <Image style={{marginLeft:15}} source={require('../assets/feedback_icon.png')} />
-   <Text style={[styles.txt,{marginLeft:10}]}>FeedBack</Text>
-   </View>
-   <View>
-   <Image source={require('../assets/Next_icon.png')} style={[styles.searchIcon,{marginRight:15}]} />
-   </View>
-   </View>
-   
- </View>
-
+        <View
+          style={[
+            styles.card,
+            {
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            },
+          ]}>
+          <View style={{display: 'flex', flexDirection: 'row'}}>
+            <Image
+              style={{marginLeft: 15}}
+              source={require('../assets/feedback_icon.png')}
+            />
+            <Text style={[styles.txt, {marginLeft: 10}]}>FeedBack</Text>
+          </View>
+          <View>
+            <Image
+              source={require('../assets/Next_icon.png')}
+              style={[styles.searchIcon, {marginRight: 15}]}
+            />
+          </View>
+        </View>
+      </View>
     </View>
   );
 };
@@ -180,24 +342,24 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     margin: 10,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.2,
     shadowRadius: 2,
     elevation: 2,
-    zIndex:2
+    zIndex: 2,
   },
   iconContainer: {
-    position:'relative',
+    position: 'relative',
     width: 50,
     height: 50,
     borderRadius: 25,
     backgroundColor: '#ffffff',
-    zIndex:1,
+    zIndex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 10,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.2,
     shadowRadius: 2,
     elevation: 2,
@@ -211,21 +373,20 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'white',
   },
-  userEmail:{
-     fontSize:12,
-     color:'grey'
+  userEmail: {
+    fontSize: 12,
+    color: 'grey',
   },
   linearGradient4: {
-    position:'absolute',
+    position: 'absolute',
     borderRadius: 40,
-    width:60,
-    height:60,
-    top:5,
-    marginLeft:5
+    width: 60,
+    height: 60,
+    top: 5,
+    marginLeft: 5,
   },
-  // Cards 
-card:{
-marginBottom:30
-},
-
+  // Cards
+  card: {
+    marginBottom: 30,
+  },
 });
